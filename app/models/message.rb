@@ -16,6 +16,7 @@ class Message < ApplicationRecord
   scope :all_sent_to, -> (user) { where(to: user.id)}
   scope :ordered, -> {order('created_at DESC')}
   scope :master_messages, -> { includes(:sender).where.not(status: 2)}
+  scope :not_archived, -> { where.not(status: :archived) }
   attr_accessor :receiver_email
 
   # callback on update

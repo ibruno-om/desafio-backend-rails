@@ -9,6 +9,7 @@ default: &default
 development:
   <<: *default
   database: agenda_mail_development
+  password: <%= ENV['AGENDA_MAIL_DEV_DATABASE_PASSWORD'] %>
 
 test:
   <<: *default

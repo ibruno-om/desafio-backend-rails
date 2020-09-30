@@ -17,6 +17,23 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :api do
+    namespace :v1 do
+      resources :messages, only: [:index, :show, :create] do
+        collection do
+          get 'sent'
+          get 'archived'
+          get 'archive_multiple'
+          patch ':id/archive', to: 'messages#archive'
+        end
+      end
+
+      resources :users, only: [:index, :update], param: :id do
+        get '/messages', to: 'users#messages'
+      end
+    end
+  end
+
   get '/archived' => 'messages#archived', as: 'archived'
   patch '/archive' => 'messages#archive', as: 'archive', defaults: {format: 'js'}
   patch '/archive_multiple' => 'messages#archive_multiple', as: 'archive_multiple', defaults: {format: 'js'}
