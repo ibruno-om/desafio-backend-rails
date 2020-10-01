@@ -10,17 +10,6 @@ class Api::V1::MessagesController < Api::V1::ApplicationController
     render json: Message.sent_to(@user_token).not_archived.as_json
   end
 
-  def create
-    user = User.find_by_email(message_params[:receiver_email])
-    @message = Message.new(message_params.merge(from: @user_token&.id, to: user&.id))
-
-    if @message.save
-      render json: @message.as_json
-    else
-      render json: @message.errors, status: 422
-    end
-  end
-
   def show
     if @message.receiver == @user_token || (is_master_permission? && @user_token.present?)
       render json: @message.as_json
@@ -30,6 +19,17 @@ class Api::V1::MessagesController < Api::V1::ApplicationController
       else
         head(:bad_request)
       end
+    end
+  end
+
+  def create
+    user = User.find_by_email(message_params[:receiver_email])
+    @message = Message.new(message_params.merge(from: @user_token&.id, to: user&.id))
+
+    if @message.save
+      render json: @message.as_json
+    else
+      render json: @message.errors, status: 422
     end
   end
 

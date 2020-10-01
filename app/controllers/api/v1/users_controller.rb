@@ -3,6 +3,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   include TokenAuthenticable
 
   before_action :verify_token_and_master, only: [:index, :messages]
+  before_action :verify_token, only: :update
   before_action :set_user, only: [:messages, :update]
 
   def index
@@ -11,8 +12,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   def messages
     if @user.present?
-      @sent = Message.sent_from(@user).ordered
-      @received = Message.sent_to(@user).ordered
+      @sent = Message.sent_from(@user).not_archived.ordered
+      @received = Message.sent_to(@user).not_archived.ordered
       render json: { sent: @sent, received: @received}.as_json
     else
       head(:bad_request)
